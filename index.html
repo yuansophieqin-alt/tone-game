@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>声调大冒险 · 句子模式</title>
+<style>
+:root{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:#15202b;background:#f4f7fb}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:14px}
+.app{width:min(100%,720px);background:#fff;border-radius:30px;padding:22px;box-shadow:0 18px 60px rgba(20,32,43,.12)}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center}.brand{font-weight:900;font-size:21px}.sub{font-size:12px;color:#7b8794;margin-top:3px}.badge{background:#eaf3ff;color:#2563eb;border-radius:999px;padding:9px 14px;font-weight:850}
+.sentence{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin:22px 0 16px}
+.word{min-width:62px;text-align:center;padding:7px 6px;border-radius:14px;transition:.15s}.word .py{display:block;font-size:13px;color:#718096;font-weight:700;margin-bottom:2px}.word .hz{display:block;font-size:25px;font-weight:900}.word.active{background:#eaf3ff;color:#1d4ed8;transform:translateY(-2px)}.word.active .py{color:#4777df}.punct{min-width:auto}
+.game{height:350px;position:relative;overflow:hidden;border:1px solid #dbe8ef;border-radius:25px;background:linear-gradient(#def4ff,#effaff 62%,#eaf8e9)}
+svg{position:absolute;inset:0;width:100%;height:100%}.lane{stroke:#d8e9ff;stroke-width:70;fill:none;stroke-linecap:round;stroke-linejoin:round}.guide{stroke:#4f7ff0;stroke-width:7;fill:none;stroke-dasharray:12 13;stroke-linecap:round;stroke-linejoin:round}.progress{stroke:#7aa2ff;stroke-width:12;opacity:.35;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.axis{position:absolute;left:11px;color:#64748b;font-size:13px;font-weight:850}.high{top:18%}.mid{top:47%}.low{top:76%}
+.panda{position:absolute;width:52px;height:52px;margin:-26px 0 0 -26px;background:#fff;border-radius:50%;display:grid;place-items:center;font-size:36px;box-shadow:0 7px 18px rgba(0,0,0,.14);transition:left .05s linear,top .10s ease-out;will-change:left,top}
+.finish{position:absolute;right:4%;top:18%;font-size:32px}.status{position:absolute;right:14px;top:14px;background:rgba(255,255,255,.85);padding:8px 11px;border-radius:999px;color:#2563eb;font-size:12px;font-weight:850}
+.coach{margin-top:13px;background:#edf6ff;color:#2563eb;border-radius:18px;padding:13px;text-align:center;font-weight:850;min-height:48px}
+.actions{display:grid;grid-template-columns:1fr auto;gap:10px;margin-top:13px}button{border:0;border-radius:17px;padding:15px 20px;font-size:16px;font-weight:850}.primary{background:#17212b;color:white}.secondary{background:#eef2f6;color:#17212b}
+.tip{text-align:center;color:#718096;font-size:13px;margin-top:13px}.privacy{text-align:center;color:#a0aec0;font-size:11px;margin-top:8px}
+@media(max-width:520px){.app{padding:16px}.game{height:315px}.word{min-width:52px}.word .hz{font-size:22px}.sentence{gap:3px}.actions{grid-template-columns:1fr}.secondary{display:none}}
+</style>
+</head>
+<body>
+<main class="app">
+ <div class="top"><div><div class="brand">🎙️ 声调大冒险</div><div class="sub">句子模式 · 自然语流 · 高 / 中 / 低三档</div></div><div id="badge" class="badge">整句练习</div></div>
+
+ <div id="sentence" class="sentence">
+   <div class="word"><span class="py">ní</span><span class="hz">你</span></div>
+   <div class="word"><span class="py">hǎo</span><span class="hz">好</span></div>
+   <div class="word punct"><span class="py">&nbsp;</span><span class="hz">，</span></div>
+   <div class="word"><span class="py">wǒ</span><span class="hz">我</span></div>
+   <div class="word"><span class="py">jiào</span><span class="hz">叫</span></div>
+   <div class="word"><span class="py">Xiǎo</span><span class="hz">小</span></div>
+   <div class="word"><span class="py">Mǎ</span><span class="hz">马</span></div>
+   <div class="word punct"><span class="py">&nbsp;</span><span class="hz">。</span></div>
+ </div>
+
+ <section class="game">
+   <span class="axis high">高</span><span class="axis mid">中</span><span class="axis low">低</span>
+   <svg viewBox="0 0 1000 600" preserveAspectRatio="none">
+     <!-- Simplified sentence contour: broad three-level road, not literal F0 -->
+     <path class="lane" d="M95 330 C125 315 155 245 190 205 C220 260 240 395 275 420 C305 410 335 385 365 405 C395 415 425 400 455 390 C485 220 515 185 540 190 C565 235 590 350 620 415 C650 390 680 300 710 245 C740 215 770 205 800 220 C825 270 845 405 875 425 C900 425 920 390 935 350"/>
+     <path id="progress" class="progress" pathLength="100" d="M95 330 C125 315 155 245 190 205 C220 260 240 395 275 420 C305 410 335 385 365 405 C395 415 425 400 455 390 C485 220 515 185 540 190 C565 235 590 350 620 415 C650 390 680 300 710 245 C740 215 770 205 800 220 C825 270 845 405 875 425 C900 425 920 390 935 350"/>
+     <path id="road" class="guide" pathLength="100" d="M95 330 C125 315 155 245 190 205 C220 260 240 395 275 420 C305 410 335 385 365 405 C395 415 425 400 455 390 C485 220 515 185 540 190 C565 235 590 350 620 415 C650 390 680 300 710 245 C740 215 770 205 800 220 C825 270 845 405 875 425 C900 425 920 390 935 350"/>
+   </svg>
+   <div id="status" class="status">跟着句子走</div>
+   <div id="panda" class="panda">🐼</div><div class="finish">🏁</div>
+ </section>
+
+ <div id="coach" class="coach">按开始后，连续说：「你好，我叫小马。」</div>
+ <div class="actions"><button id="start" class="primary">🎙️ 开始整句练习</button><button id="reset" class="secondary">↻ 再来一次</button></div>
+ <div class="tip">💡 蓝线按自然语流设计：例如「你好」里的“你”按三声变调处理。只看高 / 中 / 低和大致升降，不要求复制精确音高。</div>
+ <div class="privacy">🔒 声音只在浏览器中分析，不上传录音。</div>
+</main>
+<script>
+const panda=document.querySelector('#panda'), road=document.querySelector('#road'), progress=document.querySelector('#progress'),
+startBtn=document.querySelector('#start'), resetBtn=document.querySelector('#reset'), coach=document.querySelector('#coach'),
+statusEl=document.querySelector('#status'), badge=document.querySelector('#badge'), words=[...document.querySelectorAll('.word')].filter(x=>!x.classList.contains('punct'));
+let ctx,analyser,stream,buf,raf,running=false,t0=0,smooth=null,base=null,last=null,samples=[];
+const duration=6500;
+function hzMidi(h){return 69+12*Math.log2(h/440)}
+function ac(b,sr){let rms=0;for(let v of b)rms+=v*v;rms=Math.sqrt(rms/b.length);if(rms<.014)return-1;
+ let min=Math.floor(sr/480),max=Math.min(Math.floor(sr/75),b.length-2),best=-1,score=0;
+ for(let lag=min;lag<=max;lag++){let c=0,n=b.length-lag;for(let i=0;i<n;i++)c+=b[i]*b[i+lag];c/=n;if(c>score){score=c;best=lag}}
+ if(best<0)return-1;let norm=0,n=b.length-best;for(let i=0;i<n;i++)norm+=(b[i]*b[i]+b[i+best]*b[i+best])*.5;norm/=n;
+ return norm>0&&score/norm>.57?sr/best:-1}
+function point(t){let len=road.getTotalLength(),p=road.getPointAtLength(len*Math.max(0,Math.min(1,t)));return{x:p.x/10,y:p.y/6}}
+function setWord(t){let i=Math.min(words.length-1,Math.floor(t*words.length));words.forEach((w,j)=>w.classList.toggle('active',j===i))}
+function reset(){running=false;cancelAnimationFrame(raf);smooth=base=last=null;samples=[];words.forEach(w=>w.classList.remove('active'));
+ let p=point(0);panda.style.left=p.x+'%';panda.style.top=p.y+'%';progress.style.strokeDasharray='100';progress.style.strokeDashoffset='100';
+ statusEl.textContent='跟着句子走';coach.textContent='按开始后，连续说：「你好，我叫小马。」';badge.textContent='整句练习';startBtn.disabled=false;startBtn.textContent='🎙️ 开始整句练习'}
+function finish(){running=false;words.forEach(w=>w.classList.remove('active'));badge.textContent='完成 ✓';
+ if(samples.length<20){coach.textContent='我没有听完整，再自然地说一遍整句话。';statusEl.textContent='再来一次'}
+ else{coach.textContent='很好！先感受整句话的高低起伏，不需要每个字都完全贴线。';statusEl.textContent='✨ 完成一句！'}
+ startBtn.disabled=false;startBtn.textContent='🎙️ 再说一次'}
+function loop(){if(!running)return;analyser.getFloatTimeDomainData(buf);let h=ac(buf,ctx.sampleRate),t=Math.min(1,(performance.now()-t0)/duration),p=point(t);
+ if(h>0){let m=hzMidi(h);if(last!==null&&Math.abs(m-last)>6)m=last;last=m;smooth=smooth===null?m:smooth*.94+m*.06;if(base===null)base=smooth;
+   let delta=smooth-base;
+   // Only three broad levels. Voice nudges panda around the prescribed sentence road.
+   let level=delta>1.6?-1:delta<-1.6?1:0; // screen direction
+   let offset=level*5.2;
+   panda.style.left=p.x+'%';panda.style.top=Math.max(10,Math.min(88,p.y+offset))+'%';samples.push({t,m:smooth});
+   statusEl.textContent=level<0?'高 ↑':level>0?'低 ↓':'中 →';
+ }else{panda.style.left=p.x+'%';panda.style.top=p.y+'%'}
+ progress.style.strokeDashoffset=String(100-t*100);setWord(t);
+ if(t>=1){finish();return}raf=requestAnimationFrame(loop)}
+async function start(){try{if(!stream){stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
+ ctx=new (window.AudioContext||window.webkitAudioContext)();await ctx.resume();let src=ctx.createMediaStreamSource(stream);analyser=ctx.createAnalyser();analyser.fftSize=2048;src.connect(analyser);buf=new Float32Array(analyser.fftSize)}
+ reset();running=true;t0=performance.now();badge.textContent='● 正在听';coach.textContent='连续说，不要一个字一个字停顿。';startBtn.disabled=true;startBtn.textContent='正在聆听…';loop()}
+ catch(e){badge.textContent='麦克风未开启';coach.textContent='请允许浏览器使用麦克风后再试。'}}
+startBtn.onclick=start;resetBtn.onclick=reset;reset();
+</script>
+</body></html>
